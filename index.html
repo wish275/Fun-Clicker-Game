@@ -1,0 +1,214 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fun Clicker Game! 🏆</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+      background: linear-gradient(120deg, #f0f8ff, #ffe4e1);
+      position: relative;
+    }
+    h1 {
+      font-size: 3em;
+      margin: 20px 0;
+      text-shadow: 2px 2px #ffa;
+    }
+    #clickButton, #restartButton {
+      font-size: 2em;
+      padding: 20px 40px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      position: relative;
+      margin: 10px;
+      transition: transform 0.1s, background-color 0.2s;
+    }
+    #clickButton { background-color: #ff69b4; }
+    #restartButton { background-color: #4CAF50; color: white; display: none; }
+    #score, #timer, #highScore { font-size: 2em; margin-top: 10px; text-shadow: 1px 1px #fff; }
+    .emoji {
+      position: absolute;
+      font-size: 30px;
+      pointer-events: none;
+      animation: floatUp 1s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-150px) rotate(360deg); }
+    }
+    .confetti {
+      position: absolute;
+      border-radius: 3px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+    .sparkle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: drift 5s linear infinite;
+    }
+    @keyframes drift {
+      0% { transform: translateY(0) translateX(0); opacity: 0.8; }
+      100% { transform: translateY(-500px) translateX(100px); opacity: 0; }
+    }
+    .bonus {
+      position: absolute;
+      font-size: 40px;
+      cursor: pointer;
+      animation: floatUp 1s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fun Clicker Game! 🏆</h1>
+  <button id="clickButton">Click me!</button>
+  <button id="restartButton">Restart Game 🔄</button>
+  <div id="score">Score: 0</div>
+  <div id="timer">Time: 30s</div>
+  <div id="highScore">High Score: 0</div>
+
+  <script>
+    let score = 0;
+    let timeLeft = 30;
+    let timerInterval = null;
+    const button = document.getElementById('clickButton');
+    const restartButton = document.getElementById('restartButton');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const highScoreDisplay = document.getElementById('highScore');
+
+    const emojis = ["💥","✨","🦄","🎈","🔥","🌈","🍕","💎","⚡"];
+    const buttonColors = ['#ff69b4', '#4caf50', '#ffeb3b', '#2196f3', '#ff9800', '#9c27b0', '#e91e63'];
+    const bonusEmojis = ["💰","🌟","🍀","💎"];
+
+    // Load high score
+    let highScore = localStorage.getItem('clickerHighScore') || 0;
+    highScoreDisplay.textContent = "High Score: " + highScore;
+
+    // Background sparkles
+    for (let i = 0; i < 30; i++) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.left = Math.random() * window.innerWidth + 'px';
+      sparkle.style.top = Math.random() * window.innerHeight + 'px';
+      sparkle.style.animationDuration = (3 + Math.random() * 3) + 's';
+      document.body.appendChild(sparkle);
+    }
+
+    function startTimer() {
+      if (timerInterval) return; 
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = "Time: " + timeLeft + "s";
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      button.disabled = true;
+      restartButton.style.display = 'inline-block';
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('clickerHighScore', highScore);
+        highScoreDisplay.textContent = "High Score: " + highScore;
+        alert("⏰ Time's up! 🎉 New High Score: " + score + "!");
+      } else {
+        alert("⏰ Time's up! Score: " + score + "\nHigh Score: " + highScore);
+      }
+      launchConfettiFullScreen();
+    }
+
+    function launchConfettiFullScreen() {
+      const colors = ['#f94144','#f3722c','#f9c74f','#90be6d','#577590','#43aa8b','#f9844a','#f8961e'];
+      const confettiCount = 300;
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        const size = Math.random() * 10 + 5; 
+        confetti.style.width = size + 'px';
+        confetti.style.height = size + 'px';
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = Math.random() * window.innerHeight + 'px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 2500);
+      }
+    }
+
+    function spawnBonusEmoji() {
+      const bonus = document.createElement('div');
+      bonus.className = 'bonus';
+      bonus.textContent = bonusEmojis[Math.floor(Math.random() * bonusEmojis.length)];
+      bonus.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+      bonus.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+      document.body.appendChild(bonus);
+      bonus.addEventListener('click', () => {
+        score += 5; // bonus points
+        scoreDisplay.textContent = "Score: " + score;
+        bonus.remove();
+      });
+      setTimeout(() => bonus.remove(), 1000);
+    }
+
+    function resetGame() {
+      score = 0;
+      timeLeft = 30;
+      scoreDisplay.textContent = "Score: 0";
+      timerDisplay.textContent = "Time: 30s";
+      button.disabled = false;
+      restartButton.style.display = 'none';
+      timerInterval = null;
+    }
+
+    button.addEventListener('click', () => {
+      startTimer();
+      score++;
+      scoreDisplay.textContent = "Score: " + score;
+
+      // Button color changes
+      button.style.backgroundColor = buttonColors[Math.floor(Math.random() * buttonColors.length)];
+
+      // Exploding emojis
+      for (let i = 0; i < 3; i++) {
+        const emoji = document.createElement('div');
+        emoji.className = 'emoji';
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.style.left = (button.offsetLeft + button.offsetWidth/2) + 'px';
+        emoji.style.top = (button.offsetTop + button.offsetHeight/2) + 'px';
+        emoji.style.fontSize = (20 + Math.random() * 30) + 'px';
+        document.body.appendChild(emoji);
+        setTimeout(() => emoji.remove(), 1000);
+      }
+
+      // Button jumps
+      button.style.position = 'absolute';
+      button.style.top = (Math.random() * (window.innerHeight - 100)) + "px";
+      button.style.left = (Math.random() * (window.innerWidth - 200)) + "px";
+
+      // Confetti every 10 clicks
+      if (score % 10 === 0) launchConfettiFullScreen();
+
+      // Spawn bonus emoji randomly (10% chance)
+      if (Math.random() < 0.1) spawnBonusEmoji();
+    });
+
+    restartButton.addEventListener('click', resetGame);
+  </script>
+</body>
+</html>
