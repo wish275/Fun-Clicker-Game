@@ -1,7 +1,6 @@
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Fun Clicker Game! 🏆</title>
+  <title>Fun Clicker Game! </title>
   <style>
     body {
       font-family: 'Comic Sans MS', sans-serif;
@@ -29,15 +28,15 @@
       transition: transform 0.1s, background-color 0.2s;
     }
     #clickButton { background-color: #ff69b4; }
-    #restartButton { background-color: #4CAF50; color: white; display: none; }
+    #restartButton { background-color: #5CAF50; color: white; display: none; }
     #score, #timer, #highScore { font-size: 2em; margin-top: 10px; text-shadow: 1px 1px #fff; }
     .emoji {
       position: absolute;
       font-size: 30px;
       pointer-events: none;
-      animation: floatUp 1s ease-out forwards;
+      animation: floatDown 1s ease-out forwards;
     }
-    @keyframes floatUp {
+    @keyframes floatDown {
       0% { opacity: 1; transform: translateY(0) rotate(0deg); }
       100% { opacity: 0; transform: translateY(-150px) rotate(360deg); }
     }
@@ -212,3 +211,4 @@
   </script>
 </body>
 </html>
+
